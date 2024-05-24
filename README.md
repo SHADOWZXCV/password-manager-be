@@ -1,21 +1,23 @@
-# Bus-Tracker-Server
-This is the backend for my [Madrasa Management System](https://github.com/SHADOWZXCV/Wezzaa).
+# Password manager server
 ## Functionality & Purpose
-Madrasa Management system is School administration system for managing bus moderators & the children they're responsible for.
+A password manager system built for managing passwords. The user can add new passwords to their account, organize them in categories and sub-categories, and search for a specific password. The user can also import and export passwords.
+
 #### Features:
-- School account setup after verification.
-- A System that verifies school emails based on the verification code we sent to them by the [special server](https://github.com/SHADOWZXCV/Madrasa-Special-Server).
-- School administration system.
 
-    - `CRUD` for moderators
+- **Adding passwords:** The user can add new passwords to their account.
 
-    - `CRUD` for children info & images
+- **Organizing passwords:** The user can organize their passwords in categories and sub-categories.
+
+- **Searching passwords:** The user can search for a specific password.
+
+- **Importing passwords:** The user can import passwords from a file.
+
+- **Exporting passwords:** The user can export passwords to a file.
+
 #### TODO:
-- [ ] Manage routes & change moderators for each route in case of emergency situations.
+- [ ] Lots
+- [ ] And lots of features.
 
-- [ ] Add special event system for tracking moderators in-time and out-time.
-
-- [ ] Also make it for children in-bus-time and out-bus-time.
 ## Architecture
 ### Folder structure:
 <pre>
