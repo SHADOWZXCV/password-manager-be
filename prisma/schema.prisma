@@ -8,14 +8,15 @@ datasource db {
 }
 
 model User {
-  name             String @db.VarChar(50)
-  id               String @id
-  email            String @unique
-  pw               String?
-  salt             String?
-  provider         String // google, github, local
+  name              String  @db.VarChar(50)
+  id                String  @id
+  email             String  @unique
+  pw                String?
+  salt              String?
+  provider          String // google, github, local
   verification_code String?
-  profile_pic String?
+  profile_pic       String?
+  vaults            vault[] @relation("uservaults")
 }
 
 model session {
@@ -24,4 +25,23 @@ model session {
   expire DateTime @db.Timestamp(6)
 
   @@index([expire], map: "IDX_session_expire")
+}
+
+model vault {
+  id            String        @id
+  name          String
+  user_id       String
+  user          User          @relation("uservaults", fields: [user_id], references: [id], onDelete: Cascade)
+  vault_entries vault_entry[] @relation("vault_entry")
+  created_at    DateTime      @db.Timestamp(6)
+  updated_at    DateTime      @db.Timestamp(6)
+}
+
+model vault_entry {
+  id         String   @id
+  value      String // includes name inside & value, encrypted
+  vault_id   String
+  vault      vault    @relation("vault_entry", fields: [vault_id], references: [id], onDelete: Cascade)
+  created_at DateTime @db.Timestamp(6)
+  updated_at DateTime @db.Timestamp(6)
 }
