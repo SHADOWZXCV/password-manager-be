@@ -28,7 +28,7 @@ model session {
 }
 
 model vault {
-  id            String        @id
+  id            String        @id @default(cuid())
   name          String
   user_id       String
   user          User          @relation("uservaults", fields: [user_id], references: [id], onDelete: Cascade)
