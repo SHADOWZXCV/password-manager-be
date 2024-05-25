@@ -1,18 +1,14 @@
-const mongoose = require('mongoose');
+const { PrismaClient } = require('@prisma/client')
 const logger = require('@Util/log');
 
 class DB {
     constructor(){
-        this._connect();
-    }
+        if(!DB._instance){
+            DB._instance = new PrismaClient();
+            logger.info('PrismaClient instance created');
+        }
 
-    _connect(){
-        mongoose.set('strictQuery', true)
-        mongoose.connect(process.env.DBUri, (err) => err ? logger.fatal(err) : logger.info('db is conntected'));
-    }
-
-    getConnection(){
-        return mongoose.connection;
+        return DB._instance
     }
 }
 

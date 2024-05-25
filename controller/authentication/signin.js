@@ -2,6 +2,7 @@ const logger = require('@Util/log');
 const passport = require('passport');
 
 const redirectToGoogleAuth = passport.authenticate('google', {  scope: ['profile', 'email'] });
+const redirectToGitHubAuth = passport.authenticate('github');
 
 // TODO: add verification to all inputs
 const handleSignIn = (req, res, next) => passport.authenticate('local',
@@ -19,5 +20,6 @@ const handleSignIn = (req, res, next) => passport.authenticate('local',
 
 module.exports = {
     handleSignIn,
-    redirectToGoogleAuth
+    redirectToGoogleAuth,
+    redirectToGitHubAuth
 };

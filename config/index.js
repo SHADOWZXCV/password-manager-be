@@ -1,7 +1,8 @@
-const MongoStore = require('connect-mongo')
+const expressSession = require('express-session')
+const connectPgSimple = require("connect-pg-simple")
 const logger = require("@Util/log")
 
-const { getConnection } = require('@Models')
+const Store = connectPgSimple(expressSession)
 
 const corsOptions = {
     origin: process.env.origin,
@@ -15,17 +16,9 @@ const sessionOptions = {
     sameSite: true,
     resave: false,
     saveUninitialized: false,
-    store: MongoStore.create({
-        client: getConnection().getClient(),
-        dbName: process.env.dbName,
-        collectionName: "sessions",
-        // For some reason all below is
-        // not useful in any shape or form
-        // what I found is that the max age already does all the work!
-        // autoRemove: 'interval',
-        // autoRemoveInterval: 1
-        // ttl: 1
-    }),
+    store: new Store({
+        ttl: process.env.sessionTTL
+    })
     // cookie: {
         //   maxAge: 1000 * 6,
         //   sameSite: true,
