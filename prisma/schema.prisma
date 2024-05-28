@@ -30,6 +30,7 @@ model session {
 model vault {
   id            String        @id @default(cuid())
   name          String
+  vault_key     String
   user_id       String
   user          User          @relation("uservaults", fields: [user_id], references: [id], onDelete: Cascade)
   vault_entries vault_entry[] @relation("vault_entry")
@@ -38,8 +39,8 @@ model vault {
 }
 
 model vault_entry {
-  id         String   @id
-  value      String // includes name inside & value, encrypted
+  id         String   @id @default(cuid())
+  content      String // includes name inside & value, encrypted
   vault_id   String
   vault      vault    @relation("vault_entry", fields: [vault_id], references: [id], onDelete: Cascade)
   created_at DateTime @db.Timestamp(6)

@@ -1,5 +1,5 @@
 const logger = require('@Util/log');
-const { error } = require('winston');
+const { error, log } = require('winston');
 
 const validateOptions = {
     abortEarly: false,
@@ -8,10 +8,16 @@ const validateOptions = {
 };
 
 const schemaAssigner = routerSchemas => (req, res, next) => {
-    const schema = routerSchemas[req.path];
+    if(!routerSchemas[req.path]) {
+        logger.error('Non defined route');
+
+        return res.status(500).json({ error: 'Internal server error' });
+    }
+
+    const schema = routerSchemas[req.path][req.method];
     req.bodyValidator = schema;
 
-    if(!schema && req.method !== 'GET') {
+    if(!schema) {
         logger.error('No schema found for this route');
 
         return res.status(500).json({ error: 'Internal server error' });

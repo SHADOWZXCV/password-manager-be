@@ -1,4 +1,5 @@
 const logger = require("@Util/log");
+const { request } = require("express");
 
 const expressControllerWrapper = (controller) => (req, res, next) => {
     const request = {
@@ -7,7 +8,8 @@ const expressControllerWrapper = (controller) => (req, res, next) => {
         requestQuery: req.query,
         requestHeaders: req.headers,
         requestUser: req.user,
-        requestFiles: req.file
+        requestFiles: req.file,
+        requestSession: req.session
     };
 
     // logger.debug(JSON.stringify(request.requestData));
@@ -21,9 +23,12 @@ const expressControllerWrapper = (controller) => (req, res, next) => {
     }
 
     promise
-        .then(({ status, data, error, useNext }) => {
+        .then(({ status, data, error, useNext, actions }) => {
             if(useNext)
                 return next()
+
+            if(actions)
+                applyActions(req, res, actions)
 
             return res.status(status).send(data || error)
         })
@@ -37,5 +42,17 @@ const expressControllerWrapper = (controller) => (req, res, next) => {
             return next(error);
         });
 };
+
+const applyActions = (req, res, actions) => {
+    const { sessionData } = actions
+
+    if(!sessionData)
+        return
+
+    req.session.sessionData = {
+        ...req.session.sessionData,
+        ...sessionData
+    }
+}
 
 module.exports.expressControllerWrapper = expressControllerWrapper

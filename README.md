@@ -3,6 +3,13 @@
 A password manager system built for managing passwords. The user can add new passwords to their account, organize them in categories and sub-categories, and search for a specific password. The user can also import and export passwords.
 
 #### Features:
+[x] 1- sign in using google & github
+[x] 1.1- users cannot add to a vault unless it is opened by the key during the session
+[/] 2- ability to add - view - update or delete passwords
+
+3- create workspaces, and invite users to them via: invitation links, or via account names
+
+4- add subscription plans ( free - pro individual: > 100 passwords - pro workspace features ( >5 users per workspace, > 10 passwords per workspace ) )
 
 - **Adding passwords:** The user can add new passwords to their account.
 
