@@ -4,7 +4,48 @@ const Response = require('@Entities/response')
 const { encrypt, decrypt } = require('@Util/aes')
 const { verify } = require("@Util/password")
 
-const getVaultById = async ({ requestData, requestUser }) => {
+const getVaultById = async ({ requestQuery, requestUser }) => {
+    const { vaultId, pageNumber = 1, pageCapacity = 10 } = requestQuery 
+    const { id } = requestUser
+
+    if(!vaultId) 
+        return new Response({ status: 400, error: {
+            error: 'No such vault'
+        } })
+
+    const vault = await prismaClient.vault.findFirst({ 
+        where: { id: vaultId, user_id: id },
+        include: { vault_entries: {
+            take: pageCapacity,
+        } },
+    })
+
+    if (!vault)
+        return new Response({ status: 404, error: {
+            error: 'No such vault'
+        } })    
+    
+    // CPU INTENSIVE: decrypt vault entries
+    // TODO: think of a different way to do this that isn't CPU intensive
+    vault.vault_entries = vault.vault_entries.map((entry) => {
+        return {
+            ...entry,
+            content: decrypt(entry.content)
+        }
+    })
+        
+    return new Response({ status: 200, data: {
+        vaultData: {
+            id: vault.id,
+            name: vault.name,
+            created_at: vault.created_at,
+            updated_at: vault.updated_at,
+            vault_entries: vault.vault_entries
+        }
+    }})
+}
+
+const openVault = async ({ requestData, requestUser }) => {
     const { key, vaultId } = requestData 
     const { id } = requestUser
 
@@ -19,8 +60,7 @@ const getVaultById = async ({ requestData, requestUser }) => {
         } })
 
     const vault = await prismaClient.vault.findFirst({ 
-        where: { id: vaultId, user_id: id },
-        include: { vault_entries: true }
+        where: { id: vaultId, user_id: id }
     })
 
     if (!vault)
@@ -33,30 +73,25 @@ const getVaultById = async ({ requestData, requestUser }) => {
     const isCorrectKey = await verify(key, hashedKey)
 
     if (!isCorrectKey)
-        return new Response({ status: 401, error: {
+        return new Response({ status: 400, error: {
             error: 'Incorrect key'
         } })
-    
-    
-    
-    // CPU INTENSIVE: decrypt vault entries
-    // TODO: think of a different way to do this that isn't CPU intensive
-    vault.vault_entries = vault.vault_entries.map((entry) => {
-        return {
-            ...entry,
-            content: decrypt(entry.content)
-        }
-    })
         
-    return new Response({ status: 200, data: vault, actions: {
+    return new Response({ status: 200, data: {
+        vaultData: {
+            id: vault.id,
+            name: vault.name,
+            created_at: vault.created_at,
+            updated_at: vault.updated_at,
+        }
+    }, actions: {
         sessionData: {
-            userId: id,
             currentVaultId: vaultId
          }
     } })
 }
 
-const getVaults = async ({ requestUser }) => {
+const getVaults = async ({ requestUser, requestSession }) => {
     const { id } = requestUser
 
     const vaults = await prismaClient.vault.findMany({ where: { user_id: id } })
@@ -69,10 +104,21 @@ const getVaults = async ({ requestUser }) => {
         }
     })
 
-    return new Response({ status: 200, data: vaultsData })
+    const openedVault = requestSession.sessionData?.currentVaultId
+
+    return new Response({ status: 200, data: {
+        vaultsData,
+        openedVault,
+        user: {
+            name: requestUser.name,
+            email: requestUser.email,
+            profile_pic: requestUser.profile_pic
+        }
+    } })
 }
 
 module.exports = {
     getVaultById: controllerWrapper(getVaultById),
-    getVaults: controllerWrapper(getVaults)
+    getVaults: controllerWrapper(getVaults),
+    openVault: controllerWrapper(openVault)
 }

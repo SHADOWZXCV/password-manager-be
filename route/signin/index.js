@@ -12,17 +12,17 @@ const routerSchemas = {
         phone: joi.string().required(),
         password: joi.string().required()
     }),
-    '/google': joi.object().keys({}),
-    '/github': joi.object().keys({})
+    '/google': {
+        'GET': joi.object().keys({})
+    },
+    '/github': {
+        'GET': joi.object().keys({})
+    }
 }
 
 setupRouterBodyValidation(signInRouter, routerSchemas);
 
 signInRouter.post('/', handleSignIn);
-// TODO: route for logout
-signInRouter.get('/logout', (req, res, next) => {} );
-// TODO: route for sms verification ( no sms, use verification code instead! )
-signInRouter.post('/validate', (req, res, next) => {} );
 signInRouter.get('/google', redirectToGoogleAuth);
 signInRouter.get('/github', redirectToGitHubAuth);
 

@@ -1,5 +1,4 @@
 const logger = require('@Util/log');
-const { error, log } = require('winston');
 
 const validateOptions = {
     abortEarly: false,
@@ -27,7 +26,8 @@ const schemaAssigner = routerSchemas => (req, res, next) => {
 }
 
 const validator = (req, res, next) => {
-    const { error } = req.bodyValidator.validate(req.body, validateOptions);
+    const data = req.method === 'GET' ? req.query : req.body;
+    const { error } = req.bodyValidator.validate(data, validateOptions);
     const customError = error ? {
         // error: error._original,
         details: error.details.map(({ message, type }) => ({

@@ -25,10 +25,12 @@ const sessionOptions = {
         // }
 }
 
-const checkState = () => {
+const checkState = (cb) => {
     if(!process.env.origin){
-        logger.error('Cors origin is not specified!');
+        return logger.error('Cors origin is not specified!');
     }
+
+    cb();
 };
 
 module.exports = {

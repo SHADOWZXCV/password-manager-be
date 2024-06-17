@@ -2,9 +2,10 @@ const joi = require('joi');
 const express = require('express');
 const vaultsRouter = express.Router();
 const { setupRouterBodyValidation } = require('@Route/expressRouterValidator');
-const { getVaults, getVaultById } = require('@Controller/protected/vaultManagement/getVault');
+const { getVaults, getVaultById, openVault } = require('@Controller/protected/vaultManagement/getVault');
 const { addNewVault } = require('@Controller/protected/vaultManagement/addVault');
 const { checkUserAuthentication } = require('@Middleware/custom/isSignedIn.middleware');
+const { checkIfVaultIsOpen } = require('@Middleware/custom/authorizeVault.middleware');
 
 const routerSchemas = {
     '/': {
@@ -14,10 +15,17 @@ const routerSchemas = {
         }),
         'GET': joi.object().keys({})
     },
-    '/vault': {
+    '/openVault': {
         'POST': joi.object().keys({
             vaultId: joi.string().required(),
             key: joi.string().required()
+        })
+    },
+    '/vault': {
+        // NOTE: I have removed key verification, 
+        // since I've already added the opened vault id to the request session! 
+        'GET': joi.object().keys({
+            vaultId: joi.string().required()
         })
     }
 }
@@ -25,10 +33,10 @@ const routerSchemas = {
 vaultsRouter.use(checkUserAuthentication)
 setupRouterBodyValidation(vaultsRouter, routerSchemas)
 
-vaultsRouter.post('/', addNewVault)
 vaultsRouter.get('/', getVaults)
+vaultsRouter.get('/vault', checkIfVaultIsOpen, getVaultById)
+vaultsRouter.post('/', addNewVault)
+vaultsRouter.post('/openVault', openVault)
 vaultsRouter.post('/vault', getVaultById)
-// vaultsRouter.get('/', (req, res, next) => {} );
-// vaultsRouter.post('/validate', (req, res, next) => {} );
 
 module.exports = vaultsRouter;
