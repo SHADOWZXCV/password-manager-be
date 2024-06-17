@@ -1,7 +1,8 @@
-const { expressControllerWrapper: controllerWrapper } = require("@Middleware/custom/expressControllerWrapper.middleware")
-const prismaClient = require('@Models')
 const Response = require('@Entities/response')
+const { expressControllerWrapper: controllerWrapper } = require("@Middleware/custom/expressControllerWrapper.middleware")
 const { decrypt } = require('@Util/aes')
+const { findVaultByUserAndId } = require("@Services/vault")
+const { findVaultEntryByVaultAndId } = require("@Services/vault/entry")
 
 const getVaultEntryDetails = async ({ requestData, requestUser, requestQuery }) => {
     const { vaultId } = requestData
@@ -15,7 +16,7 @@ const getVaultEntryDetails = async ({ requestData, requestUser, requestQuery }) 
         } })
     }
 
-    const vault = await prismaClient.vault.findFirst({ where: { user_id: id, id: vaultId } })
+    const vault = await findVaultByUserAndId({ id, vaultId })
 
     if (!vault) {
         return new Response({ status: 401, error: {
@@ -23,7 +24,7 @@ const getVaultEntryDetails = async ({ requestData, requestUser, requestQuery }) 
         } })
     }
 
-    const encrypted = await prismaClient.vault_entry.findFirst({ where: { id: entryId, vault_id: vaultId } })
+    const encrypted = await findVaultEntryByVaultAndId({ vaultId, entryId })
 
     if(!encrypted) {
         return new Response({ status: 404, error: {

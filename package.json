@@ -45,6 +45,7 @@
     "@Controller": "./controller",
     "@Middleware": "./middleware",
     "@Config": "./config",
-    "@Entities": "./entities"
+    "@Entities": "./entities",
+    "@Services": "./services"
   }
 }

@@ -1,13 +1,13 @@
-const { expressControllerWrapper: controllerWrapper } = require("@Middleware/custom/expressControllerWrapper.middleware")
-const prismaClient = require('@Models')
 const Response = require('@Entities/response')
+const { expressControllerWrapper: controllerWrapper } = require("@Middleware/custom/expressControllerWrapper.middleware")
 const { encrypt, decrypt } = require('@Util/aes')
+const { createVault, findVaultByUserAndId } = require("@Services/vault")
 
 const addNewVaultEntry = async ({ requestData, requestUser }) => {
     const { name, vaultId, value } = requestData
     const { id } = requestUser
 
-    const vault = await prismaClient.vault.findFirst({ where: { user_id: id, id: vaultId } })
+    const vault = await findVaultByUserAndId({ id, vaultId })
 
     if (!vault) {
         return new Response({ status: 400, error: {
@@ -31,7 +31,7 @@ const addNewVaultEntry = async ({ requestData, requestUser }) => {
         }
      }
 
-    const dbEntry = await prismaClient.vault_entry.create({data})
+    const dbEntry = await createVault({ data })
 
     return new Response({ status: 200, data: dbEntry })
 }

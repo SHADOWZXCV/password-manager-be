@@ -1,9 +1,5 @@
 const googleStrategy = require('passport-google-oauth20').Strategy;
-const PrismaClient = require('@Models');
-const logger = require('@Util/log');
-const { parse } = require('dotenv');
-const { log } = require('winston');
-
+const { createUser, findUserByEmail } = require('@Services/user');
 
 module.exports = new googleStrategy({
     clientID: process.env.GOOGLE_CLIENT_ID,
@@ -11,7 +7,7 @@ module.exports = new googleStrategy({
     callbackURL: process.env.GOOGLE_CALLBACK_URL
 }, async (accessToken, refreshToken, profile, done) => {
     const { _json: { email } } = profile;
-    let user = await PrismaClient.user.findUnique({ where: { email } });
+    let user = await findUserByEmail(email);
 
     if(!user) {
         const newUser = {
@@ -22,7 +18,7 @@ module.exports = new googleStrategy({
             profile_pic: profile.photos[0].value
         }
 
-        user = await PrismaClient.user.create({ data: newUser });
+        user = await createUser(newUser);
     }
 
     return done(null, user);

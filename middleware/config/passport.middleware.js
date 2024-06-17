@@ -1,7 +1,7 @@
-const googleStrategy = require('@Controller/authentication/google.strategy.passport')
-const { signupLocalStrategy, localStrategy } = require('@Controller/authentication/localStrategy.passport')
 const logger = require('@Util/log')
-const PrismaClient = require('@Models')
+const { findUserById } = require('@Services/user')
+const { signupLocalStrategy, localStrategy } = require('@Controller/authentication/localStrategy.passport')
+const googleStrategy = require('@Controller/authentication/google.strategy.passport')
 const githubStrategy = require('@Controller/authentication/github.strategy.passport')
 
 function configPassport(passport) {
@@ -21,7 +21,7 @@ function configPassport(passport) {
     passport.deserializeUser((user, done) => {
         logger.debug('account is deserializing..'); 
         
-        PrismaClient.user.findUnique({ where: { id: user.id } })
+        findUserById(user.id)
         .then(user => {
             done(null, user);
         }).catch(err => {

@@ -1,6 +1,5 @@
 const GitHubStrategy = require('passport-github').Strategy;
-const PrismaClient = require('@Models');
-const logger = require('@Util/log');
+const { createUser, findUserByEmail } = require('@Services/user');
 
 module.exports = new GitHubStrategy({
     clientID: process.env.GITHUB_CLIENT_ID,
@@ -8,7 +7,7 @@ module.exports = new GitHubStrategy({
     callbackURL: process.env.GITHUB_CALLBACK_URL
 }, async (accessToken, refreshToken, profile, done) => {
     const { profileUrl } = profile;
-    let user = await PrismaClient.user.findUnique({ where: { email: profileUrl } });
+    let user = await findUserByEmail(profileUrl);
 
     if(!user) {
         const newUser = {
@@ -19,7 +18,7 @@ module.exports = new GitHubStrategy({
             profile_pic: profile.photos[0].value
         }
 
-        user = await PrismaClient.user.create({ data: newUser });
+        user = await createUser(newUser);
     }
 
     return done(null, user);

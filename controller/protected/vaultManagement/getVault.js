@@ -1,8 +1,11 @@
-const { expressControllerWrapper: controllerWrapper } = require("@Middleware/custom/expressControllerWrapper.middleware")
-const prismaClient = require('@Models')
 const Response = require('@Entities/response')
-const { encrypt, decrypt } = require('@Util/aes')
+const { expressControllerWrapper: controllerWrapper } = require("@Middleware/custom/expressControllerWrapper.middleware")
+const { decrypt } = require('@Util/aes')
 const { verify } = require("@Util/password")
+const { getListOfVaultsByUserId, 
+        findVaultByUserAndId, 
+        getVaultWithEntriesPaged 
+    } = require("@Services/vault")
 
 const getVaultById = async ({ requestQuery, requestUser }) => {
     const { vaultId, pageNumber = 1, pageCapacity = 10 } = requestQuery 
@@ -13,12 +16,7 @@ const getVaultById = async ({ requestQuery, requestUser }) => {
             error: 'No such vault'
         } })
 
-    const vault = await prismaClient.vault.findFirst({ 
-        where: { id: vaultId, user_id: id },
-        include: { vault_entries: {
-            take: pageCapacity,
-        } },
-    })
+    const vault = await getVaultWithEntriesPaged({ id, vaultId, pageNumber, pageCapacity })
 
     if (!vault)
         return new Response({ status: 404, error: {
@@ -59,9 +57,7 @@ const openVault = async ({ requestData, requestUser }) => {
             error: 'No key provided'
         } })
 
-    const vault = await prismaClient.vault.findFirst({ 
-        where: { id: vaultId, user_id: id }
-    })
+    const vault = await findVaultByUserAndId({ id, vaultId })
 
     if (!vault)
         return new Response({ status: 404, error: {
@@ -94,7 +90,7 @@ const openVault = async ({ requestData, requestUser }) => {
 const getVaults = async ({ requestUser, requestSession }) => {
     const { id } = requestUser
 
-    const vaults = await prismaClient.vault.findMany({ where: { user_id: id } })
+    const vaults = await getListOfVaultsByUserId({ id })
     const vaultsData = vaults.map(vault => {
         return {
             id: vault.id,
