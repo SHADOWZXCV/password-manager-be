@@ -5,9 +5,9 @@ const { createVault, findExistingVault } = require("@Services/vault")
 
 const addNewVault = async ({ requestData, requestUser }) => {
     const { name, key } = requestData
-    const { id } = requestUser
+    const { id: userId } = requestUser
 
-    const existingVault = await findExistingVault({ name, id })
+    const existingVault = await findExistingVault({ name, userId })
 
     if (existingVault) {
         return new Response({ status: 409, error: {
@@ -22,12 +22,9 @@ const addNewVault = async ({ requestData, requestUser }) => {
         vault_key: hashed + ':' + salt,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
-        user: {
-            connect: { id }
-        }
      }
 
-    const vault = await createVault({ data })
+    const vault = await createVault({ data, userId })
 
     return new Response({ status: 200, data: vault })
 }

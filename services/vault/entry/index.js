@@ -1,8 +1,11 @@
 const PrismaClient = require('@Services');
 
-const createVaultEntry = async (data) => {
+const createVaultEntry = async ({ data, vaultId }) => {
     return await PrismaClient.vault.create({
-        data
+        data,
+        vault: {
+            connect: { id: vaultId }
+        }
     });
 };
 

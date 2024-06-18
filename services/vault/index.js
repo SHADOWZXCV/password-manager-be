@@ -1,8 +1,11 @@
 const PrismaClient = require('@Services');
 
-const createVault = async (data) => {
+const createVault = async ({ data, userId }) => {
     return await PrismaClient.vault.create({
-        data
+        data,
+        user: {
+            connect: { id: userId }
+        }
     });
 };
 
@@ -12,9 +15,9 @@ const findVaultByUserAndId = async ({ id, vaultId }) => {
     })
 }
 
-const findExistingVault = async ({ id, name }) => {
+const findExistingVault = async ({ userId, name }) => {
     return await prismaClient.vault.findFirst({ 
-        where: { AND: [{ name } , { user_id: id }] } 
+        where: { AND: [{ name } , { user_id: userId }] } 
     })
 }
 
