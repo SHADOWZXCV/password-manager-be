@@ -1,6 +1,6 @@
 # Password manager server
 ## Functionality & Purpose
-A password manager system built for managing passwords. The user can add new passwords to their account, organize them in categories and sub-categories, and search for a specific password. The user can also import and export passwords.
+A password manager system built for managing passwords. The user can add new passwords to their account, organize them in vaults and workspaces, and search for specific passwords. The user can also import and export passwords.
 
 #### Features:
 - **Adding passwords:** The user can add new passwords to their account.
@@ -19,7 +19,7 @@ A password manager system built for managing passwords. The user can add new pas
 - [/] Ability to add - view - update or delete passwords encrypted by AES-256 algorithm.
 - [ ] User can create workspaces, and invite users to them via: invitation links, or via account names.
 - [ ] Add subscription plans ( free - pro individual: > 100 passwords 
-- pro workspace features ( >5 users per workspace, > 10 passwords per workspace ) ).
+- [ ] Pro workspace features ( >5 users per workspace, > 10 passwords per workspace ) ).
 - [ ] Lots
 - [ ] And lots of features.
 
@@ -57,8 +57,8 @@ The server runs like so:
     ```bash
     npm install
     ```
-2. Setup your .env file in root directory:
-    ```bash
+2. Setup your .env file in the root directory:
+    ```bash .env
     NODE_ENV = 'development or production'
     DBUri = 'DBUri'
     SS = 'session_secret(use-a-128-bit-good-secret)'
