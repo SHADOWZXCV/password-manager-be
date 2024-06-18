@@ -60,6 +60,7 @@ The server runs like so:
 2. Setup your .env file in the root directory:
     ```bash .env
     NODE_ENV = 'development or production'
+    PORT=3000
     DBUri = 'DBUri'
     SS = 'session_secret(use-a-128-bit-good-secret)'
     dbName = 'dbName'
