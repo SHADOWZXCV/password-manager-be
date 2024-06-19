@@ -18,10 +18,9 @@ const registerRoutes = require('@Route')
 
 checkCorsState(() => app.use(cors(corsOptions)))
 
-// TODO: do session differentiation for user roles.
-app.use(expressSession)
 
 // Authentication Middlewares
+app.use(expressSession)
 app.use(passport.session())
 app.use(passport.initialize())
 configPassport(passport)

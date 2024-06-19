@@ -7,30 +7,11 @@ const { getListOfVaultsByUserId,
         getVaultWithEntriesPaged 
     } = require("@Services/vault")
 
-const getVaultById = async ({ requestQuery, requestUser }) => {
-    const { vaultId, pageNumber = 1, pageCapacity = 10 } = requestQuery 
+const openAndMoveToDestVault = async ({ requestQuery, requestUser }) => {
+    const { vaultId, destinationVaultId, destinationKey, entriesIds } = requestQuery 
     const { id } = requestUser
 
-    if(!vaultId) 
-        return new Response({ status: 400, error: {
-            error: 'No such vault'
-        } })
 
-    const vault = await getVaultWithEntriesPaged({ userId: id, vaultId, pageNumber, pageCapacity })
-
-    if (!vault)
-        return new Response({ status: 404, error: {
-            error: 'No such vault'
-        } })    
-    
-    // CPU INTENSIVE: decrypt vault entries
-    // TODO: think of a different way to do this that isn't CPU intensive
-    vault.vault_entries = vault.vault_entries.map((entry) => {
-        return {
-            ...entry,
-            content: decrypt(entry.content)
-        }
-    })
         
     return new Response({ status: 200, data: {
         vaultData: {
@@ -40,6 +21,10 @@ const getVaultById = async ({ requestQuery, requestUser }) => {
             updated_at: vault.updated_at,
             vault_entries: vault.vault_entries
         }
+    }, actions: {
+        sessionData: {
+            currentVaultId: destinationVaultId
+         }
     }})
 }
 

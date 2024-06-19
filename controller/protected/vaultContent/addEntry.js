@@ -1,6 +1,6 @@
 const Response = require('@Entities/response')
 const { expressControllerWrapper: controllerWrapper } = require("@Middleware/custom/expressControllerWrapper.middleware")
-const { encrypt, decrypt } = require('@Util/aes')
+const { encrypt } = require('@Util/aes')
 const { findVaultByUserAndId } = require("@Services/vault")
 const { createVaultEntry } = require("@Services/vault/entry")
 

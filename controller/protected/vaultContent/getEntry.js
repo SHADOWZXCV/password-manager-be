@@ -3,12 +3,13 @@ const { expressControllerWrapper: controllerWrapper } = require("@Middleware/cus
 const { decrypt } = require('@Util/aes')
 const { findVaultByUserAndId } = require("@Services/vault")
 const { findVaultEntryByVaultAndId } = require("@Services/vault/entry")
+const logger = require("@Util/log")
 
 const getVaultEntryDetails = async ({ requestData, requestUser, requestQuery }) => {
-    const { vaultId } = requestData
-    const { id: entryId } = requestQuery
+    const { vaultId, entryId } = requestQuery
     const { id } = requestUser
 
+    logger.info(vaultId, entryId)
 
     if(!vaultId || !entryId) {
         return new Response({ status: 400, error: {

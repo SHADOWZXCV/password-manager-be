@@ -31,7 +31,7 @@ const configurePassportRoutes = app => {
 }
 
 const redirectToDashboard = (req, res) => {
-    return res.redirect(`${process.env.origin}/my`);
+    return res.sendStatus(200);
 }
 
 module.exports = configureRoutes
