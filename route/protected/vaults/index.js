@@ -58,6 +58,6 @@ vaultsRouter.patch('/vault/name', checkIfVaultIsOpen, changeVaultName)
 vaultsRouter.post('/', addNewVault)
 vaultsRouter.post('/openVault', openVault)
 vaultsRouter.post('/vault', getVaultById)
-vaultsRouter.post('/move/entries', checkIfVaultIsOpen, openAndMoveToDestVault)
+// vaultsRouter.post('/move/entries', checkIfVaultIsOpen, openAndMoveToDestVault)
 
 module.exports = vaultsRouter;
