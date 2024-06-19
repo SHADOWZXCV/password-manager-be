@@ -9,8 +9,6 @@ const getVaultEntryDetails = async ({ requestData, requestUser, requestQuery }) 
     const { vaultId, entryId } = requestQuery
     const { id } = requestUser
 
-    logger.info(vaultId, entryId)
-
     if(!vaultId || !entryId) {
         return new Response({ status: 400, error: {
             error: 'No such entry'
