@@ -14,14 +14,36 @@ const createVaultEntry = async ({ data, vaultId }) => {
 
 const updateEntry = async ({ data, vaultId, entryId }) => {
     return await PrismaClient.vault_entry.update({
-        where: { id: entryId, vault_id: vaultId },
+        where: { 
+            id: entryId, 
+            vault: {
+                id: vaultId
+            }
+        },
         data,
+    });
+};
+
+const moveSelectedEntriesToNewVault = async ({ newVaultId, entryIds }) => {
+    return await PrismaClient.vault_entry.updateMany({
+        where: { id: { 
+            in: entryIds 
+            }
+        },
+        data: {
+            vault_id: newVaultId
+        }
     });
 };
 
 const findVaultEntryByVaultAndId = async ({ entryId, vaultId }) => {
     return await PrismaClient.vault_entry.findFirst({ 
-        where: { id: entryId, vault_id: vaultId } 
+        where: {
+            id: entryId, 
+            vault: {
+                id: vaultId
+            }
+        } 
     })
 }
 
@@ -35,5 +57,6 @@ module.exports = {
     createVaultEntry,
     updateEntry,
     deleteEntry,
-    findVaultEntryByVaultAndId
+    findVaultEntryByVaultAndId,
+    moveSelectedEntriesToNewVault
 }

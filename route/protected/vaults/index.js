@@ -7,6 +7,7 @@ const { addNewVault } = require('@Controller/protected/vaultManagement/addVault'
 const { changeVaultName } = require('@Controller/protected/vaultManagement/putVault');
 const { checkUserAuthentication } = require('@Middleware/custom/isSignedIn.middleware');
 const { checkIfVaultIsOpen } = require('@Middleware/custom/authorizeVault.middleware');
+const { openAndMoveToDestVault } = require('@Controller/protected/vaultManagement/moveVaultEntries');
 
 const routerSchemas = {
     '/': {
@@ -40,7 +41,7 @@ const routerSchemas = {
     '/move/entries': {
         // NOTE: I have removed key verification, 
         // since I've already added the opened vault id to the request session! 
-        'PUT': joi.object().keys({
+        'PATCH': joi.object().keys({
             vaultId: joi.string().required(),
             destinationVaultId: joi.string().required(),
             destinationKey: joi.string().required(),
@@ -58,6 +59,6 @@ vaultsRouter.patch('/vault/name', checkIfVaultIsOpen, changeVaultName)
 vaultsRouter.post('/', addNewVault)
 vaultsRouter.post('/openVault', openVault)
 vaultsRouter.post('/vault', getVaultById)
-// vaultsRouter.post('/move/entries', checkIfVaultIsOpen, openAndMoveToDestVault)
+vaultsRouter.patch('/move/entries', checkIfVaultIsOpen, openAndMoveToDestVault)
 
 module.exports = vaultsRouter;

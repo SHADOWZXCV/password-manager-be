@@ -16,26 +16,41 @@ const updateVaultName = async ({ data, userId, vaultId }) => {
         data,
         where: {
             id: vaultId,
-            user_id: userId
+            user: {
+                id: userId
+            }
         }
     });
 };
 
 const findVaultByUserAndId = async ({ id, vaultId }) => {
     return await PrismaClient.vault.findFirst({ 
-        where: { user_id: id, id: vaultId } 
+        where: {
+            id: vaultId,
+            user: { id }
+        }
     })
 }
 
 const findExistingVault = async ({ userId, name }) => {
     return await PrismaClient.vault.findFirst({ 
-        where: { AND: [{ name } , { user_id: userId }] } 
+        where: { 
+            name,
+            user: {
+                id: userId
+            }
+         } 
     })
 }
 
-const getVaultWithEntriesPaged = async ({ vaultId, pageNumber = 1, pageCapacity = 10, userId: id }) => {
+const getVaultWithEntriesPaged = async ({ vaultId, pageNumber = 1, pageCapacity = 10, userId }) => {
     return await PrismaClient.vault.findFirst({ 
-        where: { id: vaultId, user_id: id },
+        where: { 
+            id: vaultId,
+            user: {
+                id: userId
+            } 
+        },
         include: { vault_entries: {
             take: pageCapacity,
         } },
@@ -44,7 +59,11 @@ const getVaultWithEntriesPaged = async ({ vaultId, pageNumber = 1, pageCapacity 
 
 const getListOfVaultsByUserId = async ({ id }) => {
     return await PrismaClient.vault.findMany({ 
-        where: { user_id: id } 
+        where: { 
+            user: {
+                id
+            }
+         } 
     })
 }
 
