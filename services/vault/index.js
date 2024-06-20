@@ -54,6 +54,20 @@ const deleteVault = async ({ userId, vaultId }) => {
     })
 }
 
+const addVaultsToWorkspace = async ({ workspaceId, vaults, userId }) => {
+    return await PrismaClient.vault.updateMany({
+        where: {
+            id: {
+                in: vaults
+            },
+            user_id: userId
+        },
+        data: {
+            workspace_id: workspaceId
+        }
+    })
+}
+
 const getVaultWithEntriesPaged = async ({ vaultId, pageNumber = 1, pageCapacity = 10, userId }) => {
     return await PrismaClient.vault.findFirst({ 
         where: { 
@@ -62,9 +76,11 @@ const getVaultWithEntriesPaged = async ({ vaultId, pageNumber = 1, pageCapacity 
                 id: userId
             } 
         },
-        include: { vault_entries: {
-            take: pageCapacity,
-        } },
+        include: { 
+            vault_entries: {
+                take: pageCapacity,
+            } 
+        },
     })
 }
 
@@ -85,5 +101,6 @@ module.exports = {
     getVaultWithEntriesPaged,
     updateVaultName,
     getListOfVaultsByUserId,
-    deleteVault
+    deleteVault,
+    addVaultsToWorkspace
 }

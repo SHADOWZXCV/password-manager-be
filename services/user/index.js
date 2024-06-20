@@ -22,8 +22,20 @@ const findUserById = async (id) => {
     })
 }
 
+const findUsersById = async (ids, selectedColumns) => {
+    return await PrismaClient.user.findMany({
+        where: {
+            id: {
+                in: ids
+            }
+        },
+        ...(selectedColumns ? { select: selectedColumns } : {})
+    })
+}
+
 module.exports = {
     createUser,
     findUserByEmail,
-    findUserById
+    findUserById,
+    findUsersById
 }

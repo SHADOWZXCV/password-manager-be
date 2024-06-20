@@ -4,7 +4,8 @@ const { createUser, findUserByEmail } = require('@Services/user');
 module.exports = new GitHubStrategy({
     clientID: process.env.GITHUB_CLIENT_ID,
     clientSecret: process.env.GITHUB_CLIENT_SECRET,
-    callbackURL: process.env.GITHUB_CALLBACK_URL
+    callbackURL: process.env.GITHUB_CALLBACK_URL,
+    scope: 'user:email'
 }, async (accessToken, refreshToken, profile, done) => {
     const { profileUrl } = profile;
     let user = await findUserByEmail(profileUrl);
@@ -13,7 +14,7 @@ module.exports = new GitHubStrategy({
         const newUser = {
             id: profile.id,
             name: profile.displayName,
-            email: profile.profileUrl,
+            email: profile.email,
             provider: profile.provider,
             profile_pic: profile.photos[0].value
         }

@@ -1,8 +1,9 @@
-const signInRouter = require('@Route/signin');
-const vaultsRouter = require('@Route/protected/vaults');
 const passport = require('passport');
-const vaultsEntriesRouter = require('@Route/protected/vaultsEntries');
+const signInRouter = require('@Route/signin');
 const userAuthRouter = require('@Route/protected');
+const vaultsRouter = require('@Route/protected/vaults');
+const vaultsEntriesRouter = require('@Route/protected/vaultsEntries');
+const workspacesRouter = require('@Route/protected/workspaces');
 
 const configureRoutes = app => {
     app.use('/signin', signInRouter);
@@ -11,6 +12,7 @@ const configureRoutes = app => {
     // route validator's req.path logic breaks.
     app.use('/vaults/entries', vaultsEntriesRouter);
     app.use('/vaults', vaultsRouter);
+    app.use('/workspaces', workspacesRouter);
 
     configurePassportRoutes(app);
 };

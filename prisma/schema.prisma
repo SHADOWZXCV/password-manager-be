@@ -18,6 +18,7 @@ model User {
   profile_pic       String?
   vaults            vault[] @relation("uservaults")
   workspace_user    WorkspaceUser[] @relation("UsersInWorkspace")
+  workspaces        Workspace[] @relation("creatorsOfWorkspace")
 }
 
 model session {
@@ -53,8 +54,10 @@ model vault_entry {
 model Workspace {
   id                  String              @id @default(cuid())
   name                String
-  description         String
-  icon_name           String
+  description         String?
+  icon_name           String?
+  creator_id          String
+  created_by          User                @relation("creatorsOfWorkspace", fields: [creator_id], references: [id])
   workspace_users     WorkspaceUser[]     @relation("WorkspaceUsers")
   vaults              vault[]             @relation("WorkspaceVaults")
 }
@@ -64,6 +67,7 @@ model WorkspaceUser {
   workspace_id  String
   user_id   String
   role      String
+  status    String
   user      User        @relation("UsersInWorkspace", fields: [user_id], references: [id], onDelete: Cascade)
-  workspace   Workspace @relation("WorkspaceUsers", fields: [workspace_id], references: [id], onDelete: Cascade)
+  workspace Workspace @relation("WorkspaceUsers", fields: [workspace_id], references: [id], onDelete: Cascade)
 }
