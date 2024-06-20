@@ -12,18 +12,25 @@ const expressControllerWrapper = (controller) => (req, res, next) => {
         requestSession: req.session
     };
 
-    // logger.debug(JSON.stringify(request.requestData));
-
     const promise = controller(request);
 
-    // If the controller returns nothing, then it means go to the next middleware.
+    // The controller must return a promise. 
+    // If the controller returns nothing, send an error to express.
     if (!promise || !promise.then) {
         logger.error("Controller must return a promise!");
         return next("Internal server error!");
     }
 
     promise
-        .then(({ status, data, error, useNext, actions }) => {
+        .then(response => {
+            if(!response)
+            {
+                logger.error(`Controller: ${controller.name} must return a response object`);
+                return res.sendStatus(404);
+            }
+            
+            const { status, data, error, useNext, actions } = response
+
             if(useNext)
                 return next()
 
