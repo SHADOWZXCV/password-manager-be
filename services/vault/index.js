@@ -43,6 +43,17 @@ const findExistingVault = async ({ userId, name }) => {
     })
 }
 
+const deleteVault = async ({ userId, vaultId }) => {
+    return await PrismaClient.vault.delete({ 
+        where: { 
+            id: vaultId,
+            user: {
+                id: userId
+            }
+         } 
+    })
+}
+
 const getVaultWithEntriesPaged = async ({ vaultId, pageNumber = 1, pageCapacity = 10, userId }) => {
     return await PrismaClient.vault.findFirst({ 
         where: { 
@@ -73,5 +84,6 @@ module.exports = {
     findVaultByUserAndId,
     getVaultWithEntriesPaged,
     updateVaultName,
-    getListOfVaultsByUserId
+    getListOfVaultsByUserId,
+    deleteVault
 }

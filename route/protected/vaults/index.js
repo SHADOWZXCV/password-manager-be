@@ -3,6 +3,7 @@ const express = require('express');
 const vaultsRouter = express.Router();
 const { setupRouterBodyValidation } = require('@Route/expressRouterValidator');
 const { getVaults, getVaultById, openVault } = require('@Controller/protected/vaultManagement/getVault');
+const { deleteVaultById } = require('@Controller/protected/vaultManagement/deleteVault');
 const { addNewVault } = require('@Controller/protected/vaultManagement/addVault');
 const { changeVaultName } = require('@Controller/protected/vaultManagement/putVault');
 const { checkUserAuthentication } = require('@Middleware/custom/isSignedIn.middleware');
@@ -15,7 +16,7 @@ const routerSchemas = {
             name: joi.string().required(),
             key: joi.string().required()
         }),
-        'GET': joi.object().keys({})
+        'GET': joi.object().keys({}),
     },
     '/openVault': {
         'POST': joi.object().keys({
@@ -28,7 +29,10 @@ const routerSchemas = {
         // since I've already added the opened vault id to the request session! 
         'GET': joi.object().keys({
             vaultId: joi.string().required()
-        })
+        }),
+        'DELETE': joi.object().keys({
+            vaultId: joi.string().required()
+        }),
     },
     '/vault/name': {
         // NOTE: I have removed key verification, 
@@ -53,12 +57,12 @@ const routerSchemas = {
 vaultsRouter.use(checkUserAuthentication)
 setupRouterBodyValidation(vaultsRouter, routerSchemas)
 
-vaultsRouter.get('/', getVaults)
-vaultsRouter.get('/vault', checkIfVaultIsOpen, getVaultById)
-vaultsRouter.patch('/vault/name', checkIfVaultIsOpen, changeVaultName)
-vaultsRouter.post('/', addNewVault)
 vaultsRouter.post('/openVault', openVault)
-vaultsRouter.post('/vault', getVaultById)
+vaultsRouter.get('/', getVaults)
+vaultsRouter.post('/', addNewVault)
+vaultsRouter.get('/vault', checkIfVaultIsOpen, getVaultById)
+vaultsRouter.delete('/vault', checkIfVaultIsOpen, deleteVaultById)
+vaultsRouter.patch('/vault/name', checkIfVaultIsOpen, changeVaultName)
 vaultsRouter.patch('/move/entries', checkIfVaultIsOpen, openAndMoveToDestVault)
 
 module.exports = vaultsRouter;
