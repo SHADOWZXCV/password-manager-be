@@ -1,11 +1,10 @@
 const joi = require('joi');
 const express = require('express');
 const signInRouter = express.Router();
-const { handleSignIn, 
-        redirectToGoogleAuth,
+const { redirectToGoogleAuth,
         redirectToGitHubAuth    
     } = require('@Controller/authentication/signin');
-const { setupRouterBodyValidation } = require('@Route/expressRouterValidator');
+const { setupRouterBodyValidation } = require('@Route/config/expressRouterValidator');
 
 const routerSchemas = {
     '/': joi.object().keys({
@@ -22,7 +21,6 @@ const routerSchemas = {
 
 setupRouterBodyValidation(signInRouter, routerSchemas);
 
-signInRouter.post('/', handleSignIn);
 signInRouter.get('/google', redirectToGoogleAuth);
 signInRouter.get('/github', redirectToGitHubAuth);
 

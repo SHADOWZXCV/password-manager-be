@@ -1,7 +1,7 @@
 const joi = require('joi');
 const express = require('express');
 const vaultsEntriesRouter = express.Router();
-const { setupRouterBodyValidation } = require('@Route/expressRouterValidator');
+const { setupRouterBodyValidation } = require('@Route/config/expressRouterValidator');
 const { getVaultEntryDetails } = require('@Controller/protected/vaultContent/getEntry');
 const { addNewVaultEntry } = require('@Controller/protected/vaultContent/addEntry');
 const { updateVaultEntry } = require('@Controller/protected/vaultContent/updateEntry');

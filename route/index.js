@@ -5,25 +5,23 @@ const vaultsRouter = require('@Route/protected/vaults');
 const vaultsEntriesRouter = require('@Route/protected/vaultsEntries');
 const workspacesRouter = require('@Route/protected/workspaces');
 
-const configureRoutes = app => {
-    app.use('/signin', signInRouter);
-    app.use('/authorize', userAuthRouter);
+const injectRoutes = app => {
+    injectAuthRoutes(app);
+
     // for some reason, the order of the next 2 routes is important, or the
     // route validator's req.path logic breaks.
     app.use('/vaults/entries', vaultsEntriesRouter);
     app.use('/vaults', vaultsRouter);
     app.use('/workspaces', workspacesRouter);
 
-    configurePassportRoutes(app);
 };
 
-const configurePassportRoutes = app => {
-    app.get('/signout', (req, res) => {
-        req.logout(function(err) {
-            if (err) { return next(err); }
-            return res.sendStatus(200);
-        })
-    });
+const injectAuthRoutes = app => {
+    app.use('/signin', signInRouter);
+    app.use('/authorize', userAuthRouter);
+    app.get('/signout', signout);
+
+    // passport's callback handlers for 3rd party authentication
     app.get('/auth/google/callback', 
     passport.authenticate('google', { failureRedirect: '/signin' }),
     redirectToDashboard);
@@ -32,8 +30,15 @@ const configurePassportRoutes = app => {
     redirectToDashboard);
 }
 
+const signout = (req, res) => {
+    req.logout(function(err) {
+        if (err) { return next(err); }
+        return res.sendStatus(200);
+    })
+}
+
 const redirectToDashboard = (req, res) => {
     return res.sendStatus(200);
 }
 
-module.exports = configureRoutes
+module.exports = injectRoutes

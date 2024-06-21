@@ -1,7 +1,7 @@
 const joi = require('joi');
 const express = require('express');
 const userAuthRouter = express.Router();
-const { setupRouterBodyValidation } = require('@Route/expressRouterValidator');
+const { setupRouterBodyValidation } = require('@Route/config/expressRouterValidator');
 const { checkUserAuthentication } = require('@Middleware/custom/isSignedIn.middleware');
 
 const routerSchemas = {

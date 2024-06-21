@@ -1,7 +1,7 @@
 const joi = require('joi');
 const express = require('express');
 const vaultsRouter = express.Router();
-const { setupRouterBodyValidation } = require('@Route/expressRouterValidator');
+const { setupRouterBodyValidation } = require('@Route/config/expressRouterValidator');
 const { getVaults, getVaultById, openVault } = require('@Controller/protected/vaultManagement/getVault');
 const { deleteVaultById } = require('@Controller/protected/vaultManagement/deleteVault');
 const { addNewVault } = require('@Controller/protected/vaultManagement/addVault');
