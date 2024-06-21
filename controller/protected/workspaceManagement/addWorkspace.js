@@ -35,6 +35,7 @@ const addWorkspace = async ({ requestData, requestUser }) => {
     // invite all users if they exist
     if(userIds) {
         findUsersById(userIds, { id: true, email: true }).then(users => {
+            // TODO: Make sure anyone who is on the list of users should first have signed in with an email!
             const emailsList = users.map(user => user.email).filter(email => {
                 return !emailValidation.validate(email).error && email !== userEmail
             })

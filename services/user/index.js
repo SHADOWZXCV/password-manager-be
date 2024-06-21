@@ -6,10 +6,31 @@ const createUser = async (data) => {
     });
 };
 
-const findUserByEmail = async (email) => {
-    return await PrismaClient.user.findUnique({
+const updateUserById = async ({ data, id }) => {
+    return await PrismaClient.user.update({
+        data,
         where: {
-            email
+            id
+        }
+    });
+}
+
+const findUserByProviderIdOrEmail = async (providerId, email) => {
+    return await PrismaClient.user.findFirst({
+        where: {
+            OR: [
+                {
+                    accounts: {
+                        some: {
+                            provider_id: providerId
+                        }
+                    }
+                },
+                {email}
+            ]
+        },
+        include: {
+            accounts: true
         }
     })
 }
@@ -18,6 +39,9 @@ const findUserById = async (id) => {
     return await PrismaClient.user.findUnique({
         where: {
             id
+        },
+        include: {
+            accounts: true
         }
     })
 }
@@ -35,7 +59,8 @@ const findUsersById = async (ids, selectedColumns) => {
 
 module.exports = {
     createUser,
-    findUserByEmail,
     findUserById,
-    findUsersById
+    findUsersById,
+    findUserByProviderIdOrEmail,
+    updateUserById
 }

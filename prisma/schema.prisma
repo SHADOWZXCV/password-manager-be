@@ -8,17 +8,25 @@ datasource db {
 }
 
 model User {
+  id                String  @id @default(cuid())
   name              String  @db.VarChar(50)
-  id                String  @id
-  email             String  @unique
+  email             String?
   pw                String?
   salt              String?
-  provider          String // google, github, local
   verification_code String?
   profile_pic       String?
   vaults            vault[] @relation("uservaults")
   workspace_user    WorkspaceUser[] @relation("UsersInWorkspace")
   workspaces        Workspace[] @relation("creatorsOfWorkspace")
+  accounts          UserAccount[] @relation("userAccounts")
+}
+
+model UserAccount {
+  id          String  @id @default(cuid())
+  userId      String
+  provider    String  // google, github, local
+  provider_id  String  // ID from the provider
+  user        User    @relation("userAccounts", fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model session {
