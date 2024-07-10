@@ -4,7 +4,7 @@ const IV_LENGTH = 16;
 
 const encrypt = (obj) => {
     const iv = crypto.randomBytes(IV_LENGTH);
-    const cipher = crypto.createCipheriv('aes-256-cbc', Buffer.from(ENC_KEY, 'hex'), iv);
+    const cipher = crypto.createCipheriv('aes-256-gcm', Buffer.from(ENC_KEY, 'hex'), iv);
 
     let encrypted = cipher.update(JSON.stringify(obj), 'utf8', 'hex');
     encrypted += cipher.final('hex');
