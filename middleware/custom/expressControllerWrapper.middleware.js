@@ -16,7 +16,7 @@ const expressControllerWrapper = (controller) => (req, res, next) => {
 
     // The controller must return a promise. 
     // If the controller returns nothing, send an error to express.
-    if (!promise || !promise.then) {
+    if (!promise?.then) {
         logger.error("Controller must return a promise!");
         return next("Internal server error!");
     }
